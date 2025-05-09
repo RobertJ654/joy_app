@@ -1,0 +1,14 @@
+/* static/css/style.css */
+.bg-primary {
+    background-color: #26aeab !important;
+}
+
+.btn-primary {
+    background-color: #26aeab !important;
+    border-color: #26aeab !important;
+}
+
+.btn-primary:hover {
+    background-color: darken(#26aeab, 10%) !important;
+    border-color: darken(#26aeab, 10%) !important;
+}

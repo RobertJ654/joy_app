@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Acceso Denegado{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Acceso Denegado</h4>
+        <p>{{ mensaje }}</p>
+        <hr>
+        <p class="mb-0"><a href="{{ url_for('index') }}" class="alert-link">Volver a la página principal</a></p>
+    </div>
+{% endblock %}
