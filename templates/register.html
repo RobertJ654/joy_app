@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card p-4 shadow-sm">
+        <h2 class="text-center mb-4">Crear Cuenta</h2>
+
+        {% if error %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+          <div class="mb-3">
+            <label for="username" class="form-label">Usuario</label>
+            <input type="text" id="username" name="username" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo Electrónico</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="work_area" class="form-label">Área de Trabajo</label>
+            <select id="work_area" name="work_area" class="form-select" required>
+              <option value="">Selecciona...</option>
+              <option value="Plataforma">Plataforma</option>
+              <option value="Cajero">Cajero</option>
+              <option value="Créditos">Créditos</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="department" class="form-label">Departamento</label>
+            <select id="department" name="department" class="form-select" required>
+              <option value="">Selecciona...</option>
+              <option value="Chuquisaca">Chuquisaca</option>
+              <option value="La Paz">La Paz</option>
+              <option value="Cochabamba">Cochabamba</option>
+              <option value="Oruro">Oruro</option>
+              <option value="Potosí">Potosí</option>
+              <option value="Tarija">Tarija</option>
+              <option value="Santa Cruz">Santa Cruz</option>
+              <option value="Beni">Beni</option>
+              <option value="Pando">Pando</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="branch" class="form-label">Sucursal</label>
+            <input type="text" id="branch" name="branch" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="entidad_financiera" class="form-label">Entidad Financiera</label>
+            <input type="text" id="entidad_financiera" name="entidad_financiera" class="form-control" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Registrar</button>
+        </form>
+
+        <p class="text-center mt-3">
+          ¿Ya tienes cuenta? 
+          <a href="{{ url_for('login') }}">Iniciar Sesión</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
