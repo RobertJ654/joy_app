@@ -6,13 +6,59 @@
     <title>{% block title %}Mi Aplicación{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --primary-color: #26aeab;
+            --bs-primary: var(--primary-color); /* Sobreescribir el primario de Bootstrap */
+            --bs-link-color: var(--primary-color);
+        }
+        .navbar {
+            background-color: white !important;
+        }
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: var(--primary-color) !important;
+        }
+        .navbar-nav .nav-link.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-primary:hover {
+            background-color: darken(var(--primary-color), 10%) !important;
+            border-color: darken(var(--primary-color), 10%) !important;
+        }
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        .alert-primary {
+            background-color: #e6f7f7 !important;
+            border-color: #b3ecec !important;
+            color: var(--primary-color) !important;
+        }
+        footer {
+            background-color: #f8f9fa; /* Un gris claro para el footer */
+            color: var(--primary-color);
+            padding: 1em 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
     {% block head %}{% endblock %}
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('index') }}">Mi Proyecto</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">JOY</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -20,14 +66,28 @@
                     <ul class="navbar-nav me-auto">
                         {% if session['usuario'] %}
                             {% if USUARIOS[session['usuario']]['rol'] == 'admin' %}
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">Dashboard</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_mapas') }}">Mapas</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_programar') }}">Programar</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'admin_mapas' %}active{% endif %}" href="{{ url_for('admin_mapas') }}">Mapas</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'admin_programar' %}active{% endif %}" href="{{ url_for('admin_programar') }}">Programar</a>
+                                </li>
                             {% else %}
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('usuario_perfil') }}">Perfil</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('usuario_chatbot') }}">Chatbot</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('usuario_test') }}">Test</a></li>
-                                <li class="nav-item"><a class="nav-link" href="{{ url_for('usuario_calendario') }}">Calendario</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'usuario_perfil' %}active{% endif %}" href="{{ url_for('usuario_perfil') }}">Perfil</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'usuario_chatbot' %}active{% endif %}" href="{{ url_for('usuario_chatbot') }}">Chatbot</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'usuario_test' %}active{% endif %}" href="{{ url_for('usuario_test') }}">Test</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {% if request.endpoint == 'usuario_calendario' %}active{% endif %}" href="{{ url_for('usuario_calendario') }}">Calendario</a>
+                                </li>
                             {% endif %}
                         {% endif %}
                     </ul>
@@ -45,9 +105,6 @@
     <main class="container mt-4">
         {% block content %}{% endblock %}
     </main>
-    <footer class="bg-light text-center py-3 fixed-bottom">
-        {% include 'footer.html' %}
-    </footer>
     <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

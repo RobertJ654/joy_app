@@ -1,8 +1,200 @@
 {% extends 'base.html' %}
 
-{% block title %}Programar{% endblock %}
+{% block title %}Programar Evento{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style>
+        .event-page-container {
+            display: flex;
+            padding: 20px;
+        }
+
+        .event-form-container {
+            width: 60%;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-right: 20px;
+        }
+
+        .event-form-container h2 {
+            color: var(--bs-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--bs-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            background-color: darken(var(--bs-primary), 10%);
+        }
+
+        .user-list-container {
+            width: 40%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+
+        .user-list-container h3 {
+            color: var(--bs-info);
+            margin-bottom: 1rem;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-list li:last-child {
+            border-bottom: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
-    <h1>Programar</h1>
-    <p>Aquí puedes mostrar información relevante para los programar.</p>
-    {% endblock %}
+    <div class="event-page-container">
+        <div class="event-form-container">
+            <h2>Programar Nuevo Evento</h2>
+            <form id="event-form">
+                <div class="form-group">
+                    <label for="event-title">Título del Evento:</label>
+                    <input type="text" class="form-control" id="event-title" name="event-title" required>
+                    <div class="error-message" id="title-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-date">Fecha:</label>
+                    <input type="date" class="form-control" id="event-date" name="event-date" required>
+                    <div class="error-message" id="date-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-time">Hora:</label>
+                    <input type="time" class="form-control" id="event-time" name="event-time" required>
+                    <div class="error-message" id="time-error"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Ubicación (Opcional):</label>
+                    <input type="text" class="form-control" id="event-location" name="event-location">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-description">Descripción (Opcional):</label>
+                    <textarea class="form-control" id="event-description" name="event-description" rows="3"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar Evento</button>
+            </form>
+        </div>
+
+        <div class="user-list-container">
+            <h3>Usuarios</h3>
+            {% if users %}
+                <ul class="user-list">
+                    {% for user in users %}
+                        <li>{{ user.username }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay usuarios disponibles.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('event-form');
+            const titleInput = document.getElementById('event-title');
+            const dateInput = document.getElementById('event-date');
+            const timeInput = document.getElementById('event-time');
+            const titleError = document.getElementById('title-error');
+            const dateError = document.getElementById('date-error');
+            const timeError = document.getElementById('time-error');
+
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+
+                if (titleInput.value.trim() === '') {
+                    titleError.textContent = 'Por favor, ingresa el título del evento.';
+                    isValid = false;
+                } else {
+                    titleError.textContent = '';
+                }
+
+                if (dateInput.value === '') {
+                    dateError.textContent = 'Por favor, selecciona la fecha del evento.';
+                    isValid = false;
+                } else {
+                    dateError.textContent = '';
+                }
+
+                if (timeInput.value === '') {
+                    timeError.textContent = 'Por favor, selecciona la hora del evento.';
+                    isValid = false;
+                } else {
+                    timeError.textContent = '';
+                }
+
+                if (!isValid) {
+                    event.preventDefault(); // Evitar que se envíe el formulario si hay errores
+                } else {
+                    // Aquí podrías agregar la lógica para enviar los datos del evento
+                    // a tu backend (Flask) usando fetch o XMLHttpRequest.
+                    console.log('Evento a guardar:', {
+                        title: titleInput.value,
+                        date: dateInput.value,
+                        time: timeInput.value,
+                        location: document.getElementById('event-location').value,
+                        description: document.getElementById('event-description').value
+                    });
+                    alert('Evento guardado (simulado)!');
+                    form.reset(); // Limpiar el formulario después de guardar (simulado)
+                }
+            });
+        });
+    </script>
+{% endblock %}

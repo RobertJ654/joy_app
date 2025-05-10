@@ -2,7 +2,267 @@
 
 {% block title %}Calendario{% endblock %}
 
+{% block head %}
+    {{ super() }}
+    <style>
+        .calendar-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .appointment-section {
+            width: 45%;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 0.5rem; /* Equivalente a 8px */
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* Sombra suave de Bootstrap */
+        }
+
+        .appointment-section h2 {
+            color: var(--bs-primary); /* Usando la variable de color primario de Bootstrap */
+            margin-bottom: 1.5rem;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 300px; /* Aumenté la altura para el mapa */
+            border-radius: 0.375rem; /* Equivalente a 6px */
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            background-color: #e0f7fa; /* Placeholder mientras se carga el mapa */
+        }
+
+        .location-select {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem;
+            box-sizing: border-box;
+        }
+
+        .schedule-button {
+            background-color: var(--bs-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.15s ease-in-out;
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .schedule-button:hover {
+            background-color: darken(var(--bs-primary), 10%);
+        }
+
+        .calendar-widget {
+            width: 45%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            text-align: center;
+        }
+
+        .calendar-widget h2 {
+            color: var(--bs-primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar {
+            width: 100%;
+            border-collapse: collapse; /* Para evitar doble borde */
+        }
+
+        .calendar th,
+        .calendar td {
+            padding: 0.5rem;
+            text-align: center;
+            border: 1px solid #dee2e6; /* Borde ligero de Bootstrap */
+        }
+
+        .calendar th {
+            color: var(--bs-primary);
+            font-weight: bold;
+        }
+
+        .calendar .day {
+            color: #495057;
+        }
+
+        .calendar .today {
+            color: #fff;
+            background-color: var(--bs-primary);
+            border-radius: 50%;
+        }
+
+        .calendar-info {
+            margin-top: 1.5rem;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+    </style>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=TU_CLAVE_DE_API&libraries=places&callback=initMap"></script>
+    <script>
+        let map;
+
+        function initMap() {
+          // 1. Inicializar el mapa
+          map = new google.maps.Map(document.getElementById("map-container"), {
+            center: { lat: -16.5, lng: -68.15 }, // Coordenadas iniciales (La Paz)
+            zoom: 13, // Nivel de zoom inicial
+          });
+
+          // 2. Obtener la ubicación del usuario (opcional)
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const pos = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude,
+                };
+
+                map.setCenter(pos); // Centrar el mapa en la ubicación del usuario
+                searchNearbyClinics(pos); // Buscar clínicas cerca de la ubicación del usuario
+              },
+              () => {
+                // Manejar el error si no se puede obtener la ubicación
+                searchNearbyClinics(map.getCenter()); // Buscar clínicas cerca de la ubicación inicial
+              }
+            );
+          } else {
+            // El navegador no soporta geolocalización
+            searchNearbyClinics(map.getCenter()); // Buscar clínicas cerca de la ubicación inicial
+          }
+        }
+
+        function searchNearbyClinics(location) {
+          // 3. Buscar clínicas cercanas usando la API de Places
+          const service = new google.maps.places.PlacesService(map);
+          service.nearbySearch(
+            {
+              location: location,
+              radius: 5000, // Radio de búsqueda en metros (5 km)
+              type: "hospital", // Tipo de lugar (hospital, doctor, clinic, etc.)
+            },
+            (results, status) => {
+              if (status === google.maps.places.PlacesServiceStatus.OK) {
+                // 4. Crear marcadores para las clínicas encontradas
+                for (let i = 0; i < results.length; i++) {
+                  createMarker(results[i]);
+                }
+              }
+            }
+          );
+        }
+
+        function createMarker(place) {
+          // Función para crear un marcador en el mapa
+          const marker = new google.maps.Marker({
+            map,
+            position: place.geometry.location,
+            title: place.name,
+          });
+
+          // Agregar un evento al marcador para mostrar información adicional (opcional)
+          const infowindow = new google.maps.InfoWindow();
+          marker.addListener("click", () => {
+            infowindow.setContent(`
+              <div>
+                <strong>${place.name}</strong><br>
+                ${place.vicinity}
+              </div>
+            `);
+            infowindow.open(map, marker);
+          });
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
-    <h1>Calendario</h1>
-    <p>Aquí puedes mostrar información relevante para el calendario.</p>
-    {% endblock %}
+    <div class="calendar-container">
+        <div class="appointment-section">
+            <h2>Agendar una cita en el lugar más cercano:</h2>
+            <div id="map-container" class="map-container">
+                Cargando mapa...
+            </div>
+            <label for="location" class="form-label" style="display: block; margin-bottom: 0.5rem;">Seleccionar:</label>
+            <select id="location" class="form-select">
+                <option value="">Automático (basado en ubicación)</option>
+            </select>
+            <a href="#" class="schedule-button">Agendar</a>
+        </div>
+
+        <div class="calendar-widget">
+            <h2>Tu próxima cita está agenda para:</h2>
+            <table class="calendar">
+                <thead>
+                    <tr>
+                        <th scope="col">Su</th>
+                        <th scope="col">Mo</th>
+                        <th scope="col">Tu</th>
+                        <th scope="col">We</th>
+                        <th scope="col">Th</th>
+                        <th scope="col">Fr</th>
+                        <th scope="col">Sa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="day">1</td>
+                        <td class="day">2</td>
+                        <td class="day">3</td>
+                        <td class="day">4</td>
+                    </tr>
+                    <tr>
+                        <td class="day">5</td>
+                        <td class="day">6</td>
+                        <td class="day">7</td>
+                        <td class="day">8</td>
+                        <td class="day">9</td>
+                        <td class="day">10</td>
+                        <td class="day today">11</td>
+                    </tr>
+                    <tr>
+                        <td class="day">12</td>
+                        <td class="day">13</td>
+                        <td class="day">14</td>
+                        <td class="day">15</td>
+                        <td class="day">16</td>
+                        <td class="day">17</td>
+                        <td class="day">18</td>
+                    </tr>
+                    <tr>
+                        <td class="day">19</td>
+                        <td class="day">20</td>
+                        <td class="day">21</td>
+                        <td class="day">22</td>
+                        <td class="day">23</td>
+                        <td class="day">24</td>
+                        <td class="day">25</td>
+                    </tr>
+                    <tr>
+                        <td class="day">26</td>
+                        <td class="day">27</td>
+                        <td class="day">28</td>
+                        <td class="day">29</td>
+                        <td class="day">30</td>
+                        <td class="day">31</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="calendar-info">Próxima cita: <span class="fw-bold">Martes, 14 de Mayo</span></p>
+            <p class="calendar-info">Hora: <span class="fw-bold">10:00 AM</span></p>
+        </div>
+    </div>
+{% endblock %}
