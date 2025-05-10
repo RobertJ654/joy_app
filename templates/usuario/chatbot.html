@@ -3,45 +3,56 @@
 {% block title %}Chatbot{% endblock %}
 
 {% block content %}
-    <h1>Chat con Joy</h1>
+    <h2>Chat con Joy</h2>
 
-<div id="chatbox"></div>
-
-<div id="input-container">
-    <input type="text" id="mensaje">
-    <button onclick="enviarMensaje()">Enviar</button>
-</div>
-
-
-<script>
-    document.getElementById("mensaje").addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();  // Evita el comportamiento predeterminado de salto de línea en inputs de texto
-            enviarMensaje();
+    <style>
+        .fondo-imagen {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 300px; /* Ajusta el tamaño según necesites */
+            height: 300px;
+            background-image: url('/static/img/head.png'); /* Cambia por la ruta de tu imagen */
+            background-size: cover;
+            opacity: 0.5; /* Difuminado al 50% */
         }
-    });
+    </style>
 
-    async function enviarMensaje() {
-        let inputMensaje = document.getElementById("mensaje");
-        let mensaje = inputMensaje.value.trim(); // Evita enviar mensajes vacíos
+    <div id="chatbox"></div>
 
-        if (mensaje === "") return; // No hacer nada si el mensaje está vacío
+    <div id="input-container">
+        <input type="text" id="mensaje">
+        <button onclick="enviarMensaje()">Enviar</button>
+    </div>
 
-        document.getElementById("chatbox").innerHTML += `<div class="chat-bubble user-message"><strong>Tú:</strong> ${mensaje}</div>`;
-        inputMensaje.value = ""; // Limpia el campo de entrada después de enviar el mensaje
+    <div class="fondo-imagen"></div>
 
-        let respuesta = await fetch('/chatbot/get_response', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({message: mensaje})
+    <script>
+        document.getElementById("mensaje").addEventListener("keydown", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();  // Evita el comportamiento predeterminado de salto de línea en inputs de texto
+                enviarMensaje();
+            }
         });
 
-        let data = await respuesta.json();
-        document.getElementById("chatbox").innerHTML += `<div class="chat-bubble bot-message"><strong>Joy:</strong> ${data.response}</div>`;
-    }
-</script>
+        async function enviarMensaje() {
+            let inputMensaje = document.getElementById("mensaje");
+            let mensaje = inputMensaje.value.trim(); // Evita enviar mensajes vacíos
 
+            if (mensaje === "") return; // No hacer nada si el mensaje está vacío
 
+            document.getElementById("chatbox").innerHTML += `<div class="chat-bubble user-message"><strong>Tú:</strong> ${mensaje}</div>`;
+            inputMensaje.value = ""; // Limpia el campo de entrada después de enviar el mensaje
 
-    
+            let respuesta = await fetch('/chatbot/get_response', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message: mensaje})
+            });
+
+            let data = await respuesta.json();
+            document.getElementById("chatbox").innerHTML += `<div class="chat-bubble bot-message"><strong>Joy:</strong> ${data.response}</div>`;
+        }
+    </script>
+
 {% endblock %}

@@ -97,10 +97,10 @@
 {% block content %}
     <div class="event-page-container">
         <div class="event-form-container">
-            <h2>Programar Nuevo Evento</h2>
+            <h2>Programar</h2>
             <form id="event-form">
                 <div class="form-group">
-                    <label for="event-title">Título del Evento:</label>
+                    <label for="event-title">Nombre del cliente:</label>
                     <input type="text" class="form-control" id="event-title" name="event-title" required>
                     <div class="error-message" id="title-error"></div>
                 </div>
@@ -133,16 +133,77 @@
 
         <div class="user-list-container">
             <h3>Usuarios</h3>
+            <style>
+                .user-list li {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 5px;
+                    border-bottom: 1px solid #ccc;
+                }
+                .user-info {
+                    flex-grow: 1;
+                }
+                .user-buttons {
+                    display: flex;
+                    gap: 5px;
+                }
+                .check-btn {
+                    background-color: green;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    cursor: pointer;
+                }
+                .delete-btn {
+                    background-color: red;
+                    color: white;
+                    border: none;
+                    padding: 5px 10px;
+                    cursor: pointer;
+                }
+            </style>
+            
             {% if users %}
                 <ul class="user-list">
                     {% for user in users %}
-                        <li>{{ user.username }}</li>
+                        <li>
+                            <span class="user-info">{{ user.username }} - {{ user.date }}</span>
+                            <span class="user-buttons">
+                                <button class="check-btn">✔</button>
+                                <button class="delete-btn">✖</button>
+                            </span>
+                        </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No hay usuarios disponibles.</p>
+                <ul class="user-list">
+                    <li>
+                        <span class="user-info">Lucas Estrada - 10/05/2025</span>
+                        <span class="user-buttons">
+                            <button class="check-btn">✔</button>
+                            <button class="delete-btn">✖</button>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="user-info">Juan López - 11/05/2025</span>
+                        <span class="user-buttons">
+                            <button class="check-btn">✔</button>
+                            <button class="delete-btn">✖</button>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="user-info">Marcos Tapia - 15/05/2025</span>
+                        <span class="user-buttons">
+                            <button class="check-btn">✔</button>
+                            <button class="delete-btn">✖</button>
+                        </span>
+                    </li>
+                </ul>
             {% endif %}
         </div>
+
+
     </div>
 
     <script>

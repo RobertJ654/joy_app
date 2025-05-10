@@ -1,8 +1,24 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Perfil{% endblock %}
 
 {% block content %}
     <h1>Dashboard de Administrador</h1>
-    <p>Aquí puedes mostrar información relevante para los administradores.</p>
-    {% endblock %}
+
+    <style>
+        .fondo-imagen {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 300px; /* Ajusta el tamaño según necesites */
+            height: 300px;
+            background-image: url('/static/img/head.png'); /* Cambia por la ruta de tu imagen */
+            background-size: cover;
+            opacity: 0.5; /* Difuminado al 50% */
+            z-index: 5;
+        }
+    </style>
+
+    <div class="fondo-imagen"></div>
+
+{% endblock %}
